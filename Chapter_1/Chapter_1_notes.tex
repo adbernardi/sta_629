@@ -26,15 +26,9 @@ The common ground between CS, Math, and Stat; prediction, probability bounds, cl
 \underline{A Quick Example: Spam Emails}
 
 Consider the following. 
-X_i = email 
+$X_i =$ email
 
-\[
-	Y_i = 
-	\begin{cases}
-		0, & \text{if} email (valid)
-		1, & \text{if} spam 
-	\end{cases}
-\]
+$Y_i = 0$ if email (valid) and $Y_i = 1$ if spam.
 
 In this problem, we'll have to use feature extraction, to try and get a sense of which phrases and terms are important in spam filtering in emails. 
 Ultimately, this is a classification problem (labeling an email 0 or 1.)
@@ -51,18 +45,18 @@ In the feature engineering for this problem, this information gets \textit{vecto
 
 \underline{Example 4: Microarray Gene Expression Data}
 We'll now consider a slightly more involved example. 
-Y_i = Tumor Types 
-X_i = Gene Expression "levels"
+$Y_i = Tumor Types$
+$X_i = Gene Expression "levels"$
 
 This is thought of as a classic "large p, small n" problem in Machine Learning. 
-The Y_i presence makes this a supervised learning problem, and Y_i can contain labels such as benign, malignant, etc. 
+The $Y_i$ presence makes this a supervised learning problem, and $Y_i$ can contain labels such as benign, malignant, etc. 
 \textit{Semi-Supervised Learning} is where we have a label but possibly some novel sub-types in prediction. 
 A heatmap would be used in this problem case, as is provided in the book. 
 
 We will now consider the "Life Cycle of ML" which includes the following; 
 \begin{enumerate}
-		Model Deployment
-		Monitoring/Collecting Data 
+		\item Model Deployment
+		\item Monitoring/Collecting Data 
 \end{enumerate}
 
 We will also want to consider that data can be renewed, and the model can subsequently perform worse, which requires our attention. 
