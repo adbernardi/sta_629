@@ -62,6 +62,14 @@ print((corr_matrix.iloc[:,1] > 0.5).sum())
 
 II. Model Fitting and Comparison 
 
+Given that this is a p >> n problem, we will fit and compare the following models; Elastic Net, Lasso, SCAD, and MC+. 
+
+We will start by fitting the model, getting a score, and then we will compare the models based on the score and share some thoughts in greater detail. 
+
+We'll now import the necessary libaries, starting with the Elastic Net. 
+
 '''
 
+# starting with the Elastic Net import 
 
+ 
