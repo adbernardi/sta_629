@@ -72,4 +72,74 @@ We'll now import the necessary libaries, starting with the Elastic Net.
 
 # starting with the Elastic Net import 
 
- 
+from sklearn.linear_model import ElasticNet 
+from sklearn.datasets import make_regression 
+
+# we will see about a train test split later, but we can just fit the model for now 
+# we can try initializing the model and then fitting to the aforementioned data 
+model = ElasticNet(random_state = 1870) 
+# can now fit in this way 
+model.fit(X, y) 
+
+# can try and access the coefficients now 
+print(model.coef_)
+# and the intercept 
+print(model.intercept_)
+# I wonder if we can see the length and see how many coefficients we are working with
+# we might expect 2307 coefficients, and that is what we get 
+#print(len(model.coef_))
+
+# we can get the R^2 score now using the method in sklearn 
+print(model.score(X,y))
+
+# we can try to write this more formally 
+print("The R^2 score for the Elastic Net model is: ", round(model.score(X,y), 4))
+
+# looks like we have an r-squared of 0.31 or so, and we can see how the other models compare 
+# we can also make a regularization path plot for the elastic net model 
+
+from sklearn.linear_model import enet_path 
+import matplotlib.pyplot as plt 
+
+# adding some additional parameters 
+eps = 5e-3 
+
+print("Computing the regularization path using the Elastic Net...")
+alphas, est_coefs, _ = enet_path(X, y)
+print(alphas, est_coefs)
+# now we can get to the actual plotting 
+# wnat to just make the one enet plot here 
+plt.plot(np.log(alphas + eps), est_coefs.T)
+#colors = cycle(['b', 'r', 'g', 'c', 'k;'])
+colors = ['b', 'r', 'g', 'c', 'k']
+# log transforming the alphas 
+#for coef_e, c in zip(est_coefs, colors):
+#    l2 = plt.semilogx(alphas, coef_e, linestyle = '--', c = c) 
+# have to transform to get the axis right 
+#l2 = plt.semilogx(alphas, est_coefs.T, linestyle = "--", c=colors)
+plt.xlabel('alpha')
+plt.ylabel('coefficients')
+plt.title('Elastic Net Regularization Path')
+plt.axis('tight') 
+plt.show()
+
+
+
+                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
