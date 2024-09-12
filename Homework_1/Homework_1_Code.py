@@ -105,23 +105,52 @@ import matplotlib.pyplot as plt
 eps = 5e-3 
 
 print("Computing the regularization path using the Elastic Net...")
+# issue is this is creating a 3d object for alphas and est_coefs, so we need to flatten this 
 alphas, est_coefs, _ = enet_path(X, y)
-print(alphas, est_coefs)
+#print(alphas.shape , est_coefs.shape)
+print(alphas.shape, est_coefs.shape)
 # now we can get to the actual plotting 
-# wnat to just make the one enet plot here 
-plt.plot(np.log(alphas + eps), est_coefs.T)
-#colors = cycle(['b', 'r', 'g', 'c', 'k;'])
+# wnat to just make the one enet plot here
+# figuring out how to do this because everything before plotting looks fine 
+# try another method from the documentation 
+
+#plt.plot(np.log(alphas + eps), est_coefs.T)
+'''
 colors = ['b', 'r', 'g', 'c', 'k']
 # log transforming the alphas 
-#for coef_e, c in zip(est_coefs, colors):
-#    l2 = plt.semilogx(alphas, coef_e, linestyle = '--', c = c) 
+for coef_e, c in zip(est_coefs, colors):
+    l2 = plt.semilogx(alphas, coef_e, linestyle = '--', c = c) 
 # have to transform to get the axis right 
-#l2 = plt.semilogx(alphas, est_coefs.T, linestyle = "--", c=colors)
+# need to trnaspose the est_coefs to get the right shape 
+est_coefs = est_coefs.np.transpose() 
+l2 = plt.semilogx(alphas, est_coefs, linestyle = "--", c=colors)
 plt.xlabel('alpha')
 plt.ylabel('coefficients')
 plt.title('Elastic Net Regularization Path')
 plt.axis('tight') 
 plt.show()
+'''
+
+# we'll put a pin in the plotting for now, and move on to the Lasso model 
+from sklearn import linear_model 
+
+# we can try and fit the model now with a default alpha 
+lasso_m = linear_model.Lasso()
+# fitting the model now 
+lasso_m.fit(X, y)
+
+# we can now get the slopes and intercept now 
+print(lasso_m.coef_)
+print(lasso_m.intercept_)
+
+# looks like a pretty sparse model in the same way which makes sense for lasso, so we can try and get the score now 
+print(lasso_m.score(X, y))
+# we can write this more formally using the same format as before 
+print("The R^2 score for the Lasso model is: ", round(lasso_m.score(X, y), 4))
+
+# we see this is noticeably worse, and we can move on to the SCAD model now 
+# later on, we can make some kind of assessment as to which genes are deemed most effective with relation to the response variable 
+
 
 
 
