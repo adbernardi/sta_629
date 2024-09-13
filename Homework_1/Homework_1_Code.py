@@ -98,21 +98,68 @@ print("The R^2 score for the Elastic Net model is: ", round(model.score(X,y), 4)
 # looks like we have an r-squared of 0.31 or so, and we can see how the other models compare 
 # we can also make a regularization path plot for the elastic net model 
 
-from sklearn.linear_model import enet_path 
-import matplotlib.pyplot as plt 
+from sklearn.linear_model import enet_path, lasso_path  
+import matplotlib.pyplot as plt
+from itertools import cycle 
 
 # adding some additional parameters 
 eps = 5e-3 
 
+# trying the same for the lasso path now 
+print("Computing regularization path using the lasso...")
+alphas_lasso, coefs_lasso, _ = lasso_path(X, y, eps = eps)
+
 print("Computing the regularization path using the Elastic Net...")
 # issue is this is creating a 3d object for alphas and est_coefs, so we need to flatten this 
-alphas, est_coefs, _ = enet_path(X, y)
-#print(alphas.shape , est_coefs.shape)
-print(alphas.shape, est_coefs.shape)
-# now we can get to the actual plotting 
-# wnat to just make the one enet plot here
-# figuring out how to do this because everything before plotting looks fine 
-# try another method from the documentation 
+#alphas, est_coefs, _ = enet_path(X, y, eps = eps) # using the default l1_ratio 
+# trying this in a different way
+# I think I have to reshape y before doing this 
+#y = y.np.reshape(-1,1) 
+print("Gut check 1...")
+print(X.shape, y.shape, type(y))
+# we'll try and convert the y variable to (83,) rather than it's current (83,1)
+y = y.flatten() 
+print("Gut check 2...")
+print(X.shape, y.shape, type(y))
+alphas_e, est_coefs, _ = enet_path(X, y, eps = eps, n_alphas = 100, l1_ratio = 0.5) # going with defaults in some cases 
+print("gut checking...")
+print(alphas_e.shape, est_coefs.shape)
+
+# NOW we should be able to plot now that the response has been flattened 
+
+# now can try and plot the results with the lasso and enet paths 
+# trying the method from the documentation now
+
+# we can try and do the transpose up here 
+print("Gut check 3...")
+print(type(coefs_lasso), type(est_coefs)) 
+
+# we can try to do the transpose now 
+coefs_lasso_t = coefs_lasso.np.transpose()
+est_coefs_t = est_coefs.np.transpose() 
+
+print("Gut check 4...")
+print(coefs_lasso_t.shape, est_coefs_t.shape)
+
+'''
+plt.figure(1) 
+colors = cycle(['b', 'r', 'g', 'c', 'k'])
+for coef_l, coef_e, c in zip(coefs_lasso, est_coefs, colors):
+    # given the dimension I think we have to transpose the est_coefs, we'll try that now
+    #print('Gut check 3...')
+    # checking the data type 
+    #print(type(coef_l), type(est_coefs))
+    #coef_et = est_coefs.np.transpose() 
+    #coef_lt = coef_l.np.transpose()
+    #l1 = plt.semilogx(alphas_lasso, coef_lt, linestyle = "--", c=c) 
+#l2 = plt.semilogx(alphas_e, coef_et, linestyle = "--", c=c) 
+plt.xlabel('alpha')
+plt.ylabel('coefficients')
+plt.title('Lasso and Elastic Net Regularization Paths') 
+plt.legend((l1[-1], l2[-1]), ("Lasso", "Elastic Net"), loc = 'lower right')
+plt.axis('tight')
+'''
+
 
 #plt.plot(np.log(alphas + eps), est_coefs.T)
 '''
