@@ -262,6 +262,8 @@ Finally, the MCP, or MC+ model had a $R^2$ value of 0.27, and featured 8 non-zer
 
 The regularization paths that look the most variable are the SCAD and MCP models. This is because they have the highest $R^2$ values, and the most non-zero coefficients. This is likely due to the fact that the SCAD and MCP models are more flexible than the Lasso and Elastic Net models, and can handle more complex data in a broad sense. 
 
+As to the variables selected, there is quite a difference in the features selected, and eventually the non-zero coefficients for each of the models, with some overlap. As to why that is, I would posit that the shrinkage methods are quite different, and the differing algorithms results in different feature selection methods and coefficient methods. Clearly, despite the common data generating process, the observed R-Squared methods are quite different for all models. 
+
 Genes 150 and 508 show up in a non-zero manner in multiple models, while genes 1930 and 271 show up in the Elastic Net and SCAD models. If I had to report the genes of interest to a scientist, I would choose genes 150 and 508, as they show up in multiple models, and are likely to be the most important in terms of predicting the outcome variable. Additionally, the coefficients are largest in the SCAD model for genes 1240 and 849, and they are orders of magnitude larger than those in the Lasso and Elastic Net models, so I believe this bears mentioning. Finally, I would suggest to the consulting scientist genes 473 and 1292, as these show up in the model with the highest $R^2$ value, the SCAD model. 
 
 
