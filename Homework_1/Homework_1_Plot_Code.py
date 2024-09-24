@@ -55,7 +55,7 @@ plt.ylabel("coefficients")
 ymin, ymax = plt.ylim()
 plt.title("Elastic Net Regularization Path") 
 plt.axis('tight')
-#plt.show() 
+plt.show() 
 
 # this seems to work now! we can go through the lasso path now 
 plt.plot(alphas_l, coefs_lt)
@@ -64,7 +64,7 @@ plt.ylabel("coefficients")
 ymin, ymax = plt.ylim() 
 plt.title("Lasso Regularization Path") 
 plt.axis('tight') 
-#plt.show() 
+plt.show() 
 
 # now we will move on to the SCAD model 
 # SCAD and MC+ model done in R. Now done with the plotting, we will try and 
@@ -151,7 +151,6 @@ for name, value in zip(non_zero_feature_names_e, non_zero_values_e):
 
 # this really helps us get a sense of the most important variables
 # we can include these important variables in our write up 
-
 
 
 

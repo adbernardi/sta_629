@@ -34,11 +34,40 @@ y <- y$V1
 # need to coerce y into a numeric 
 # trying another way 
 
+# trying the new way 
+mcp <- ncvreg(X, y) # MCP is default
+coef(mcp, lambda = 0.05)
+summary(mcp , lambda = 0.1)
+
+# now trying plotting 
+# plot(mcp)
+# Extract coefficients
+coefs <- coef(mcp)
+p <- length(colnames(X)) # number of predictors
+
+# Create a plot
+plot(NA, xlim=c(1, length(mcp$lambda)), ylim=range(coefs), xlab="Lambda Index", ylab="Coefficients"
+     , main = "MCP Regularization Path")
+matlines(1:length(mcp$lambda), t(coefs[-1, ]), type="l", col=1:p, lty=1 , xlab = "Lambda Index", 
+         ylab = "Coefficients")
+
+
+# this works! 
+
 mc_model2 <- ncvreg(X, y) # MCP default 
 # maybe we're having the transpose problem again
 
+# now we can do this same thing with SCAD 
+scad <- ncvreg(X, y, penalty = "SCAD") # using the SCAD model now
+# testing this 
+summary(scad, lambda = 0.1)
+coefs_s <- coef(scad)
+# now can move on to plotting!
+# we will try and plot this in the same way 
+plot(NA, xlim = c(1, length(scad$lambda)), ylim=range(coefs_s), xlab="Lambda Index", ylab="Coefficients"
+     , main = "SCAD Regularization Path")
+matlines(1:length(scad$lambda), t(coefs[-1, ]), type="l", col=1:p, lty=1)
 plot(mc_model2, type = "scale", vertical.line = TRUE)
-
 summary(mc_model2)
 
 # it appears we have many 0 coefficients and a sparse model, which, when 

@@ -1,6 +1,7 @@
 \documentclass[12pt, letterpaper]{article}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{graphicx} 
 \title{STA 629 - Homework 1}
 \author{Anthony Bernardi}
 \date{September 16, 2024}
@@ -187,7 +188,21 @@ for name, value in zip(non_zero_feature_names_e, non_zero_values_e):
 
 \end{verbatim}
 
-The above Python code allows us to fit, plot, and score both the Lasso and Elastic Net models. We can see that the Elastic Net model has a higher $R^2$ value than the Lasso model, which we will talk about in part b. 
+We will include the regularization plots for the Elastic Net and Lasso Models here now. 
+
+\begin{figure} 
+\includegraphics{/home/adbucks/Documents/sta_629/Elastic_Net_Reg_Path.png} 
+\caption{Elastic Net Regularization Path} 
+\end{figure} 
+
+\begin{figure}
+\includegraphics{/home/adbucks/Documents/sta_629/Lasso_Reg_Path.png} 
+\caption{Lasso Regularization Path} 
+\end{figure} 
+
+
+The above Python code allows us to fit, plot, and score both the Lasso and Elastic Net models. We can see that the Elastic Net model has a higher $R^2$ value than the Lasso model
+, which we will talk about in part b. 
 
 The R code for the SCAD and MCP models is as follows. 
 
@@ -245,7 +260,21 @@ cvfit_scad <- cv.ncvreg(X, y, penalty = "SCAD")
 summary(cvfit_scad)
 \end{verbatim}
 
-The above R code allows us to fit, plot, and score both the SCAD and MCP models. We can see that the SCAD model has a higher $R^2$ value than the MCP model, which we will talk about in part b. 
+The above R code allows us to fit, plot, and score both the SCAD and MCP models.
+We can see that the SCAD model has a higher $R^2$ value than the MCP model, which we will talk about in part b. 
+
+We will now include the regularization plots for the MCP and SCAD models here. 
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{/home/adbucks/Documents/sta_629/Homework_1/MCP Regularization Path Plot.png}
+  \caption{MCP Regularization Path}
+\end{figure}
+
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{/home/adbucks/Documents/sta_629/Homework_1/SCAD Regularization Path Plot.png}
+  \caption{SCAD Regularization Path}
+\end{figure} 
 
 \subsection{Part b} 
 
