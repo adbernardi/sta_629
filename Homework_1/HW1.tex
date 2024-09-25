@@ -73,8 +73,10 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from sklearn import linear_model 
 
-X = pd.read_csv("/home/adbucks/Documents/sta_629/Homework_1/X_SRBCT.csv", header = None)
-y = pd.read_csv("/home/adbucks/Documents/sta_629/Homework_1/Y_SRBCT.csv", header = None)
+X = pd.read_csv("/home/adbucks/Documents/sta_629/Homework_1/X_SRBCT.csv"
+	, header = None)
+y = pd.read_csv("/home/adbucks/Documents/sta_629/Homework_1/Y_SRBCT.csv"
+	, header = None)
 
 # looks okay, so we can convert the response variable to numpy array to be sure 
 
@@ -128,13 +130,16 @@ plt.title("Lasso Regularization Path")
 plt.axis('tight') 
 plt.show() 
 
-# Now done with the plotting, we will try and get a sense of the most important variables, and try to get a sense of how the models compare 
+# Now done with the plotting, we will try and get 
+# a sense of the most important variables
+# , and try to get a sense of how the models compare 
 # we can start with scoring 
 
 print("Elastic Net Score: ", e_model.score(X, y)) # 0.306
 print("Lasso Score: ", lasso_m.score(X, y)) # 0.103 
 
-# seems like the elastic net model is better than the lasso model in terms of R squared values 
+# seems like the elastic net model is better than 
+# the lasso model in terms of R squared values 
 # we can try and get a sense of the most important variables now 
 
 coefs_e = e_model.coef_ 
@@ -174,7 +179,8 @@ non_zero_values = [coefs[i] for i in non_zero]
 for name, value in zip(non_zero_feature_names, non_zero_values):
     print(f'Feature: {name}, Coefficient: {value}')
 
-# I think this makes sense, and we can try to do the same for the elastic net now 
+# I think this makes sense, and we can try to do the
+# same for the elastic net now 
 coefs_e = e_model.coef_
 
 non_zero_e = [i for i, coef in enumerate(coefs_e) if coef != 0]
@@ -213,8 +219,10 @@ library("lars")
 library("ncvreg")
 
 # loading the data 
-X <- read.csv("/home/adbucks/Documents/sta_629/Homework_1/X_SRBCT.csv", header = FALSE)
-y <- read.csv("/home/adbucks/Documents/sta_629/Homework_1/Y_SRBCT.csv", header = FALSE) 
+X <- read.csv("/home/adbucks/Documents/sta_629/Homework_1/X_SRBCT.csv"
+	, header = FALSE)
+y <- read.csv("/home/adbucks/Documents/sta_629/Homework_1/Y_SRBCT.csv"
+	, header = FALSE) 
 head(X)
 dim(X)
 dim(y)
@@ -224,7 +232,8 @@ class(X) # need to convert to matrix array
 X <- as.matrix(X)
 
 class(y) # need to convert to numeric
-y <- y V1 # normally the dollar operator would be used, but not for the latex document 
+y <- y V1 # normally the dollar operator would be used
+# , but not for the latex document 
 
 
 # now we can do the actual modeling with the data loaded and get to plotting
