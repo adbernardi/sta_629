@@ -69,7 +69,7 @@ print(y_test.shape)
 # noow we can move on to the cross-validation and tuning
 # we will start with the K Nearest Neighbors model, and we will use cross-validation to find the best value of K 
 # we can now start with the grid search for the optimal KNN parameters given the data 
-from sklearn.model_selection import GridSearchCV, train_test_split 
+from sklearn.model_selection import GridSearchCV 
 from sklearn.neighbors import KNeighborsClassifier 
 
 # establishing the parameter grid 
@@ -77,14 +77,15 @@ param_grid = {'n_neighbors': np.arange(1, 25) ,
               'weights': ['uniform', 'distance'], 
               'metric': ['euclidean', 'manhattan']}
 
-'''knn_gs = GridSearchCV(KNeighborsClassifier(), param_grid, 
+knn_gs = GridSearchCV(KNeighborsClassifier(), param_grid, 
                      cv = 5)
 
 knn_grid = knn_gs.fit(X_train, y_train)
 print("Finding the best KNN model...")
-#print(knn_grid.best_params_)
-#print(knn_grid.best_score_) 
-'''
+print(knn_grid.best_params_)
+print(knn_grid.best_score_) 
+
+print("The best KNN model has the following parameters: ", knn_grid.best_params_) 
 # seems that we get the best model as having 4 neighbors, euclidean distance, and uniform weights. 
 # we will use that model to make predictions now. 
 
@@ -162,6 +163,9 @@ lin_svc_grid = lin_svc_gs.fit(X_train, y_train)
 print("Finding the best Linear SVM model...") 
 print(lin_svc_grid.best_params_) 
 print(lin_svc_grid.best_score_) 
+
+print("The best Linear SVM model has the following parameters: ", lin_svc_grid.best_params_)
+print("The best Linear SVM model has a train accuracy of: ", lin_svc_grid.best_score_) 
 '''
 # we can now see that the best linear SVC has a C value of 10 and a gamma value of 0.01.
 # we will make predictions with this best model now 
@@ -229,34 +233,6 @@ print(classification_report(y_test, y_pred_svc))
 from scipy.stats import sem 
 
 # we can start to tune our regularized logistic regression here 
-'''
-def cross_val_tune(X, y, loss, param_grid):
-    # easier if we import this 
-    from sklearn.model_selection import KFold 
-
-    kf = KFold() # from the question of the problem itself, keeping defaults otherwise 
-
-    # init the empty list for the cross-validation error 
-    cv_errors = []
-    
-
-
-    for train_index, test_index in kf.split(X):
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
-
-        # now doing grid search for the tuning hyperparameter in our case 
-        lr_gs = GridSearchCV(LogisticRegression(), param_grid, 
-                             cv = 5, scoring = loss)  
-
-        # now fitting the model 
-        lr_grid = lr_gs.fit(X_train, y_train) 
-
-        # keeping track of the errors 
-        cv_errors.append(1 - lr_grid.best_score_)
-
-    return cv_errors
-''' 
 # now we can try and call this function and see what we get, just using default loss to make sure it works
 from sklearn.model_selection import cross_val_score 
 
@@ -268,7 +244,7 @@ from sklearn.model_selection import cross_val_score
 
 # we can try and get the cross-validation error for the logistic regression model now, just using GridSearchCV to get the minimum lambda, 
 # whatever that hyperparameter is 
-
+'''
 param_grid_lr = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]}
 
 lr_gs = GridSearchCV(LogisticRegression(), param_grid = param_grid_lr) 
@@ -282,25 +258,16 @@ lr_grid = lr_gs.fit(X_train, y_train) # fitting the model
 # we'll get our best parameters and then the lowest cross validation error in terms of misclassification rate next 
 print(lr_grid.best_params_) 
 print(1 - lr_grid.best_score_) 
-
+'''
 # we see that our best parameter is a C value of 0.1, and the lowest cross-validation error in terms of mis-classification rate is 0.05. 
 
 # now we can repeat this process in terms of hinge loss 
-'''
-
-lr_gs_hinge = GridSearchCV(LogisticRegression(), param_grid = param_grid_lr, 
-                           scoring = 'hinge_loss')
-
-lr_grid_hinge = lr_gs_hinge.fit(X_train, y_train) 
 
 # now getting best parameters and the lowest cross-validation error in terms of hinge loss 
-print(lr_grid_hinge.best_params_) 
-print(1 - lr_grid_hinge.best_score_) 
-'''
-
-
 # trying to implement hinge loss in another way 
 # we'll stick with our best model from before, and we'll try to get the hinge loss 
+'''
+
 from sklearn.metrics import hinge_loss 
 
 lr_best_hinge = LogisticRegression(C = 0.1).fit(X_train, y_train) 
@@ -321,9 +288,163 @@ lr_hinge_l = hinge_loss(y_test , y_pred_hinge, labels = labels)
 
 print(lr_hinge_l) 
 
+'''
 
+# we will probably have to make a user defined function to do cross fold validation with hinge loss 
 
+def cross_val_tune(X, y, loss, param_grid):
+    # easier if we import this 
+    from sklearn.model_selection import KFold
+    from sklearn.metrics import hinge_loss  
+    
 
+    kf = KFold() # from the question of the problem itself, keeping defaults otherwise 
+
+    # init the empty list for the cross-validation error 
+    cv_errors = []
+
+    # can define the labels for the hinge loss in this problem here 
+    labels = np.arange(3, 9) # digits 3 through 8 
+
+    for train_index, test_index in kf.split(X):
+        cv_X_train, cv_X_test = X.iloc[train_index], X.iloc[test_index]
+        cv_y_train, cv_y_test = y.iloc[train_index], y.iloc[test_index]
+
+        # now doing grid search for the tuning hyperparameter in our case 
+        lr_gs = GridSearchCV(LogisticRegression(), param_grid, 
+                             cv = 5)  
+
+        # now fitting the model 
+        lr_grid = lr_gs.fit(cv_X_train, cv_y_train) # adjusting for the CV function  
+
+        # now need to find a way to assess the cross-validation error, using hinge as the loss function 
+        if loss == 'hinge_loss':
+            # implementing multi-class hinge loss 
+            y_pred_hinge = lr_grid.predict(cv_X_test) 
+
+            # including the labels and getting the actual hinge loss 
+            lr_hinge_loss = hinge_loss(cv_y_test , y_pred_hinge , labels = labels) # getting the hinge loss 
+
+        # keeping track of the errors 
+        cv_errors.append(lr_hinge_loss) # keeping track of our hinge losses for one standard error calculation 
+
+    return cv_errors
+
+# now can try calling the function 
+# def param grid for LogisticRegression 
+
+#cross_val_tune(X_train, y_train, 'hinge_loss', param_grid_lr)
+
+# trying another version of multi-class hinge loss below here 
+from sklearn.preprocessing import LabelBinarizer 
+
+'''
+def multi_class_hinge(y_true, y_pred, labels):
+    lb = LabelBinarizer()
+    lb.fit(labels) 
+
+    # getting the binarized true values 
+    y_true_binarized = lb.transform(y_true) * 2 - 1 # getting the binarized true values 
+
+    # now calculating the hinge loss 
+    losses = np.maximum(0, 1 - y_true_binarized * y_pred) 
+    loss = np.mean(losses) 
+
+    return loss 
+'''
+# now we can try and call this function 
+labels = np.arange(3, 9) 
+
+# basic model 
+#lr_new = LogisticRegression(C = 0.1).fit(X_train, y_train)
+#lr_pred = lr_new.predict(X_test)
+
+#hinge_loss_value = multi_class_hinge(y_test, lr_pred, labels)
+
+#print(hinge_loss_value) 
+
+# trying hinge loss agian 
+# trying this with a linear SVC to use the hinge loss function 
+from sklearn.svm import LinearSVC 
+
+lin_svc = LinearSVC(loss = 'hinge', max_iter = 10000) 
+
+# now establishing hte parameter grid 
+param_grid_lin_svc = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]}
+
+lin_svc_gs = GridSearchCV(lin_svc , param_grid = param_grid_lin_svc, cv = 5) 
+
+# fitting 
+lin_svc_grid = lin_svc_gs.fit(X_train, y_train) 
+
+# getting the best parameters 
+print("The best parameters using Hinge Loss are: ", lin_svc_grid.best_params_) 
+print("The best score using Hinge Loss is: ", lin_svc_grid.best_score_) 
+
+# can dig a little deeper to do the one standard error rule 
+mean_test_score = lin_svc_grid.cv_results_['mean_test_score']
+std_test_score = lin_svc_grid.cv_results_['std_test_score']
+
+# finding the best to use the standard error rule 
+best_score_idx = np.argmax(mean_test_score) 
+best_score = mean_test_score[best_score_idx]
+best_score_std = std_test_score[best_score_idx]
+
+# getting the threshold now 
+thresh = best_score - best_score_std 
+
+# we now want to find the argmax of C values that are within one standard error of the best score, as in hte one standard error rule 
+candidate_indices = [i for i, score in enumerate(mean_test_score) if score > thresh]
+simplest_idx = candidate_indices[np.argmax(mean_test_score[candidate_indices])] 
+
+# getting the best C value in line with the rule 
+best_C = lin_svc_grid.cv_results_['param_C'][simplest_idx]
+best_score_1se = mean_test_score[simplest_idx] 
+
+print("The best C value using the one standard error rule is: ", best_C) 
+print("The best score using the one standard error rule is: ", best_score_1se) 
+
+# we see that the best parameters using hinge loss are a C value of 0.1, and the best score is 0.95, which is the same as using the other method. 
+
+# we can now try and do this same process with the binomial deviance loss function 
+# we can use this as our quick workaround for the bonimal deviance loss 
+from sklearn.metrics import log_loss, make_scorer 
+
+lin_ll = LogisticRegression(solver = 'liblinear', max_iter = 10000) 
+
+# now establishing the parameter grid 
+
+param_g_ll = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]} 
+
+# trying to DIY a scoring function 
+scorer = make_scorer(log_loss, greater_is_better = False, needs_proba = True)
+ 
+gs_ll = GridSearchCV(lin_ll, param_grid = param_g_ll, cv = 5, scoring = scorer) 
+
+# fitting the model 
+gs_ll.fit(X_train, y_train) 
+
+mean_test_scores_ll = -gs_ll.cv_results_['mean_test_score'] # flipping sign due to log loss 
+std_test_scores_ll = gs_ll.cv_results_['std_test_score']
+
+# now trying to find the minimum 
+best_score_idx_ll = np.argmin(mean_test_scores_ll) 
+best_score_ll = mean_test_scores_ll[best_score_idx_ll]
+best_score_std_ll = std_test_scores_ll[best_score_idx_ll]
+
+# now finding the threshold 
+thresh_ll = best_score_ll + best_score_std_ll 
+
+# finding the simplest model that is within one standard error of the best model 
+candidate_indices_ll = [i for i, score in enumerate(mean_test_scores_ll) if score < thresh_ll]
+simplest_idx_ll = min(candidate_indices_ll, key = lambda idx: param_g_ll['C'][idx])
+
+# getting the best C value in line with the rule 
+best_params_ll_1se = gs_ll.cv_results_['params'][simplest_idx_ll]
+best_score_ll_1se = mean_test_scores_ll[simplest_idx_ll]
+
+print("The best parameters using Binomial Deviance Loss are: ", best_params_ll_1se) 
+print("The best score using Binomial Deviance Loss is: ", best_score_ll_1se) 
 
 
 
