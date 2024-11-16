@@ -340,6 +340,134 @@ That is, even the pruned Random Forest model is tied for the best model performa
 
 \subsection{Discussion}
 
+Reflect upon your results. Which method yields the best error rate? Which method yields the most inrepretable results? Which words are most important for authorship attribution? 
+
+As far as error rate, when we use the F1 score, we see that the Random Forest model is tied with the Gradient Boosted trees method, with a test F1 score of 98\%. 
+
+It is entirely possible that this data set might not provide the best opportunity for a model that generalizes, but a 98\% test F1 score is exciting regardless. 
+
+In a follow-up study, it would be worth finding a similar multi-class data set to see if our Random Forest and Gradient Boosted models can generalize. 
+
+In terms of interpretability, there are measures we can take with Random Forests and other more "Algorithmic" approaches to increase their interpretability and explainability, but in a pure sense, a Classification Tree is preferable. 
+
+If explaining and contextualizing this problem to a non-technical audience, a Classification Tree with an impressive baseline F1 Score would be a productive option, despite not performing as well as other methods. 
+
+We'll now move on to our final question, that is, which words are most important for predicting authorship. 
+
+We will include the code that helps us generate a DataFrame with the most importance word features, for the base Random Forest model, and the pruned Random Forest model afterwards. 
+
+\begin{verbatim}
+feature_names = df_train.columns[:69]
+
+print('Feature Names: ', feature_names)
+
+# now we have this, we can get feature importance for our two 
+# random forest models 
+importance_base = rf_base.feature_importances_
+
+base_feat_df = pd.DataFrame({'Feature': feature_names, 
+                             'Importance': importance_base}).sort_values('Importance', ascending = False)
+
+print(base_feat_df)
+
+# we can do this same thing with the pruned random forest and see if we get 
+# the same thing 
+importance_p5 = rf_p5.feature_importances_ 
+
+prune_feat_df = pd.DataFrame({'Feature': feature_names, 
+                              'Importance': importance_p5}).sort_values('Importance', ascending = False)
+
+print(prune_feat_df) 
+\end{verbatim}
+
+We'll include a table of the top 5 features below, with their importance score before continuing. 
+
+We'll start with the base Random Forest model. 
+
+\begin{center}
+\begin{tabular}{|c|c|} 
+\hline 
+Feature & Importance \\ 
+\hline 
+  was & 0.10 \\ 
+  be & 0.08 \\ 
+  the & 0.08 \\ 
+  to & 0.07 \\ 
+  her & 0.06 \\ 
+  \hline 
+\end{tabular} 
+\end{center} 
+
+And now for our pruned Random Forest model. 
+
+\begin{center}
+  \begin{tabular}{|c|c|}
+\hline 
+    Feature & Importance \\
+    \hline 
+    was & 0.10 \\ 
+    be & 0.08 \\ 
+    the & 0.08 \\ 
+    her & 0.07 \\ 
+    to & 0.06 \\
+    \hline 
+  \end{tabular}
+\end{center}
+
+The generality of the words is somewhat surprising, I would imagine authors would have their own preferences or "turns of phrase", but I think the fact that no single feature scores higher than 0.10 bears mentioning. 
+
+This is a good sign that the model is generalizing well, and that the authors are not using words that are too unique to them. 
+
+\section{Problem 2}
+
+Derive the expression for the updating parameter in the Adaboost algorithm. 
+
+We will start by outlining expression 10.12, the updating parameter. 
+
+\[
+   \beta_m = \frac{1}{2} \log \left( \frac{1 - \epsilon_m}{\epsilon_m} \right)
+\]
+
+Given the context of AdaBoost, we will start with the exponential loss function, which we can write in the following way. 
+
+\begin{equation}
+(\beta_m, G_m) = \text{argmin}_{\beta, G} \sum_{i=1}^{N} w_i^{(m)} \\ 
+\cdot \exp(- \beta y_i G(x_i))
+\end{equation}
+
+We can take this and plug in to the following equation to start thr process. As given in the text, we can re-write the above equation in the following way. 
+
+Which then gives us the following. 
+
+\begin{equation}
+\sum_{y_i = G(x_i)} w_i^{(m)} \exp(- \beta) - \sum_{y_i \neq G(x_i)} \\
+w_i^{(m)} \exp(\beta) = 0
+\end{equation}
+
+Algebra and some manipulation gives us the following. 
+
+\begin{equation}
+exp(2 \beta) = \frac{\sum_{y_i = G(x_i)} w_i^{(m)}}{\sum_{y_i \neq G(x_i)} w_i^{(m)}}
+\end{equation}
+
+We can write this in another way, giving us a more familiar form. 
+
+\begin{equation}
+exp(2 \beta) \frac{1 - \epsilon_m}{\epsilon_m}
+\end{equation}
+
+We can think about this term as the minimized weighted error rate, given below. 
+
+\begin{equation}
+\epsilon_m = \frac{\sum_{i=1}^{N} w_i^{(m)} I(y_i \neq G_m(x_i))}{\sum_{i = 1}^{N} \\
+w_i^{(m)}}
+\end{equation}
+
+Therefore, we get our original equation from the beginning of the question, given again here. 
+
+\begin{equation}
+\beta = \frac{1}{2} log \frac{1 - \epsilon_m}{\epsilon_m}
+\end{equation}
 
 
 

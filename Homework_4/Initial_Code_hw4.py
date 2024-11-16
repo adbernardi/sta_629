@@ -311,6 +311,35 @@ print('Pruned RF Test Confusion Matrix: ', confusion_matrix(y_test, y_pred_test_
 
 # we can now move on to the write up 
 
+#################################################### 
+# Extra: Feature Importance 
+#################################################### 
+
+# we can also look at feature importance for the random forests, 
+# and hopefully the gradient boosting methods as well 
+
+# trying to extract feature names from the original data 
+feature_names = df_train.columns[:69]
+
+print('Feature Names: ', feature_names)
+
+# now we have this, we can get feature importance for our two 
+# random forest models 
+importance_base = rf_base.feature_importances_
+
+base_feat_df = pd.DataFrame({'Feature': feature_names, 
+                             'Importance': importance_base}).sort_values('Importance', ascending = False)
+
+print(base_feat_df)
+
+# we can do this same thing with the pruned random forest and see if we get 
+# the same thing 
+importance_p5 = rf_p5.feature_importances_ 
+
+prune_feat_df = pd.DataFrame({'Feature': feature_names, 
+                              'Importance': importance_p5}).sort_values('Importance', ascending = False)
+
+print(prune_feat_df) 
 
 
 
