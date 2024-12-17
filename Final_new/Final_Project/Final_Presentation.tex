@@ -1,0 +1,165 @@
+% starting the actual presentation for Wednesday 
+\documentclass{beamer}
+\usetheme{Warsaw}
+
+% title page details 
+\title{Transfer Learning in Credit Default Prediction}
+\subtitle{An Exploratory Study} 
+\author{Anthony Bernardi\inst{1}} 
+\institute{\inst{1} University of Kentucky - Department of Statistics} 
+\date{\today}
+
+\begin{document}
+
+% title page as the first slide 
+\begin{frame}
+   \titlepage 
+\end{frame}
+
+% table of contents 
+\begin{frame}{Overview} 
+  \tableofcontents
+\end{frame} 
+
+% establishing the structure 
+\section{Introduction}
+\section{Literature Review}
+\section{Data and Methodology}
+\section{Results and Future Directions}
+\section*{References}
+
+% intro slide  
+\begin{frame}{Introduction}
+  
+  \begin{itemize}
+    \item What is Transfer Learning?
+      \begin{itemize}
+        \item DL tool utilizing pre-trained models on a new prediction task 
+      \end{itemize}
+    \item Why is it relevant and important?
+      \begin{itemize}
+        \item Reduce computational costs and time 
+        \item Helps with limited data sets 
+      \end{itemize}
+    \item What are its advantages?
+      \begin{itemize}
+        \item Reduces the need for large data sets 
+        \item Can be used for a variety of prediction tasks 
+      \end{itemize} 
+  \end{itemize}
+
+\end{frame}
+
+% now can get into lit review 
+\begin{frame}{Literature Review}
+
+  \begin{itemize}
+    \item Papers of Note for this Study 
+      \begin{itemize}
+        \item \textit{A Concise Review of Transfer Learning} Farahani et al, 2021 
+        \item \textit{A Comprehensive Survey on Transfer Learning} Zhuang et al, 2020   
+      \end{itemize}
+    \item Domain Literature: Credit Default Prediction 
+      \begin{itemize}
+        \item \text{Kaggle: American Express Credit Default Prediction}
+      \end{itemize}
+  \end{itemize}
+
+\end{frame} 
+
+% moving into the methodology 
+\begin{frame}{Data and Methodology}
+
+  \begin{itemize}
+    \item Primary Data Set:
+      \begin{itemize}
+        \item \href{https://www.kaggle.com/competitions/amex-default-prediction/overview}{American Express Credit Default Prediction}
+        \item 1,000,000 + observations! 
+      \end{itemize}
+    \item Methodology: 
+      \begin{itemize}
+        \item Data Cleaning and Feature Engineering 
+        \item Feather and Parquet Files: Data Compression 
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+% initial results and future directions 
+\begin{frame}{Initial Results and Future Directions}
+
+  \begin{itemize}
+    \item Feature Engineering and Data Cleaning: 
+      \begin{itemize}
+        \item 200,000 observations after cleaning 
+        \item 225 features 
+      \end{itemize} 
+    \item Initial Model:
+      \begin{itemize}
+        \item Feed Forward Neural Network 
+      \end{itemize}
+    \item Baseline Model: 
+      \begin{itemize}
+        \item Logistic Regression
+        \item Random Forest 
+      \end{itemize} 
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Proposed Model Architecture}
+
+  \begin{verbatim}
+    class NeuralNetwork(nn.Module):
+      def __init__(self):
+          super().__init__()
+          self.flatten = nn.Flatten() 
+          self.linear_relu_stack = nn.Sequential( 
+              nn.Linear(225, 24), 
+              nn.ReLU(), 
+              nn.Linear(24, 225), 
+              nn.ReLU(), 
+              nn.Linear(225, 1),
+              nn.Sigmoid()
+          )
+  \end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Proposed Model Architecture - Feed Forward}
+
+  \begin{verbatim}
+    def forward(self, x):
+        x = self.flatten(x) 
+        logits = self.linear_relu_stack(x) 
+        return logits
+  \end{verbatim} 
+
+\end{frame} 
+
+\begin{frame}{Future Directions}
+
+    \begin{itemize}
+      \item Next Steps: 
+        \begin{itemize}
+          \item Continue to refine the base NN model 
+          \item Compare with baseline models 
+          \item Dropout to prevent overfitting
+          \item Secondary Task Credit Default Prediction 
+        \end{itemize}
+      \item Future Ideas: 
+        \begin{itemize}
+          \item Predicting other types of Default with this pre-trained model 
+          \item Comparing with other pre-trained models (e.g. Available models on HuggingFace)
+        \end{itemize}
+    \end{itemize}
+
+\end{frame} 
+
+% references with links 
+
+
+
+\end{document}
+
+
